@@ -1,43 +1,71 @@
 package com.course.capstone.littlelemon
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.*
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
+import androidx.navigation.compose.rememberNavController
+import com.course.capstone.littlelemon.datastore.AppSerializer
+import com.course.capstone.littlelemon.datastore.StoreValues
+import com.course.capstone.littlelemon.navigation.Navigation
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
 
 class MainActivity : ComponentActivity() {
+
+    val Context.dataStore by dataStore("store.json", AppSerializer)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LittleLemonTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+
+//                val value = remember{
+//                    mutableStateOf("")
+//                }
+//
+//                App(value){
+//                    value.value = it
+//                    Log.d("TAG", "onCreate: value: ${value.value}, it: ${it}")
+//                }
+
+                App(dataStore)
+
+
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun App(dataStore: DataStore<StoreValues>) {
+
+    val navController = rememberNavController()
+
+    Navigation(navController = navController,dataStore)
+
+//    OutlinedTextField(value = value.value, onValueChange = {
+//        value.value = it
+//        onValueChange(it)
+//    },
+//        keyboardOptions = KeyboardOptions(
+//            imeAction = ImeAction.Next,
+//            keyboardType = KeyboardType.Text
+//        ),
+//        keyboardActions = KeyboardActions(
+//            onNext = {
+//
+//            },
+//            onDone = {
+//
+//            }
+//        ), modifier = Modifier.padding(5.dp),
+//        label = {
+////            Text(text = if (label != null) label.toString() else "")
+//        },
+//        shape = RoundedCornerShape(5.dp))
+
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    LittleLemonTheme {
-        Greeting("Android")
-    }
-}
