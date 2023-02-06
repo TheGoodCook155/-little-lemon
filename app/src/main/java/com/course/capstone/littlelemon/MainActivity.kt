@@ -12,8 +12,13 @@ import com.course.capstone.littlelemon.datastore.AppSerializer
 import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.navigation.Navigation
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
 
 class MainActivity : ComponentActivity() {
+
+
+    val client = HttpClient(Android)
 
     val Context.dataStore by dataStore("store.json", AppSerializer)
 
@@ -31,7 +36,7 @@ class MainActivity : ComponentActivity() {
 //                    Log.d("TAG", "onCreate: value: ${value.value}, it: ${it}")
 //                }
 
-                App(dataStore)
+                App(dataStore,client)
 
 
             }
@@ -40,11 +45,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun App(dataStore: DataStore<StoreValues>) {
+fun App(dataStore: DataStore<StoreValues>, client: HttpClient) {
 
     val navController = rememberNavController()
 
-    Navigation(navController = navController,dataStore)
+    Navigation(navController = navController,dataStore, client)
 
 //    OutlinedTextField(value = value.value, onValueChange = {
 //        value.value = it
