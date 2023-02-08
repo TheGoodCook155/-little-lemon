@@ -11,9 +11,9 @@ import androidx.navigation.compose.rememberNavController
 import com.course.capstone.littlelemon.datastore.AppSerializer
 import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.navigation.Navigation
+import com.course.capstone.littlelemon.network.MealService
 import com.course.capstone.littlelemon.network.dto.Meal
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
-import com.plcoding.network.littlelemon.remote.MealService
 import io.ktor.client.*
 
 
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             LittleLemonTheme {
 
-                val posts = produceState<List<Meal>>(
+                val meals = produceState<List<Meal>>(
                     initialValue = emptyList(),
                     producer = {
                         value = service.getMeals()
