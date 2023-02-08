@@ -3,7 +3,6 @@ package com.course.capstone.littlelemon.navigation
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.core.DataStore
 
 
@@ -11,16 +10,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.course.capstone.littlelemon.OnboardingScreen
-import com.course.capstone.littlelemon.components.Constants
 import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.model.User
 import com.course.capstone.littlelemon.navigation.screens.HomeScreen
 import com.course.capstone.littlelemon.navigation.screens.ProfileScreen
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 
 interface Navigation {
@@ -84,19 +81,6 @@ fun Navigation(
     val storeValues = dataStore.data.collectAsState(
         initial = StoreValues()
     ).value
-
-    lateinit var menuResponse: HttpResponse
-
-    scope.launch{
-
-        menuResponse = client.get(Constants.BASE_URL)
-
-        Log.d("network", "Navigation: response status ${menuResponse.status}")
-
-
-    }
-
-
 
 
     Log.d("TAG", "App: states: firstName: ${firstName.value}, lastName: ${lastName.value}, emailAddress: ${emailAddress.value}")
