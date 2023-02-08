@@ -13,7 +13,7 @@ import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.navigation.Navigation
 import com.course.capstone.littlelemon.network.dto.Meal
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
-import com.plcoding.littlelemon.littlelemon.remote.MealService
+import com.plcoding.network.littlelemon.remote.MealService
 import io.ktor.client.*
 
 
