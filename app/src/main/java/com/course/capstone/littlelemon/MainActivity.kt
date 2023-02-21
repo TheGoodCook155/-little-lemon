@@ -1,9 +1,12 @@
 package com.course.capstone.littlelemon
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.runtime.*
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
@@ -11,31 +14,28 @@ import androidx.navigation.compose.rememberNavController
 import com.course.capstone.littlelemon.datastore.AppSerializer
 import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.navigation.Navigation
-import com.course.capstone.littlelemon.network.MealService
-import com.course.capstone.littlelemon.network.dto.Meal
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
+import com.course.capstone.littlelemon.viewmodel.AppViewModel
 import io.ktor.client.*
+import kotlinx.coroutines.*
 
 
 class MainActivity : ComponentActivity() {
-
-
+    
     val Context.dataStore by dataStore("store.json", AppSerializer)
-
-    private val service = MealService.create()
+    
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LittleLemonTheme {
 
-                val meals = produceState<List<Meal>>(
-                    initialValue = emptyList(),
-                    producer = {
-                        value = service.getMeals()
-                    }
-                )
+                val viewModel by viewModels<AppViewModel>()
 
-//                App(dataStore,client)
+                Log.d("clientGet", "MainActivity | data: ${viewModel.getMeals()}")
+                
+                App(dataStore = dataStore, viewModel = viewModel)
+
 
 
             }
@@ -43,12 +43,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
+
 @Composable
-fun App(dataStore: DataStore<StoreValues>, client: HttpClient) {
+fun App(dataStore: DataStore<StoreValues>, viewModel: AppViewModel) {
 
     val navController = rememberNavController()
 
-    Navigation(navController = navController,dataStore, client)
+    Navigation(navController = navController,dataStore, viewModel)
 
 //    OutlinedTextField(value = value.value, onValueChange = {
 //        value.value = it

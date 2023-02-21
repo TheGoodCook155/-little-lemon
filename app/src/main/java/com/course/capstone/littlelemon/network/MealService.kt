@@ -10,6 +10,7 @@ import io.ktor.client.features.logging.*
 interface MealService {
 
     suspend fun getMeals(): List<Meal>
+//            List<Meal>
 
     companion object {
         fun create(): MealService {

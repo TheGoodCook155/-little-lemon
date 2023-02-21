@@ -14,6 +14,7 @@ import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.model.User
 import com.course.capstone.littlelemon.navigation.screens.HomeScreen
 import com.course.capstone.littlelemon.navigation.screens.ProfileScreen
+import com.course.capstone.littlelemon.viewmodel.AppViewModel
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -51,7 +52,7 @@ object ProfileScreen: Navigation{
 fun Navigation(
     navController: NavHostController,
     dataStore: DataStore<StoreValues>,
-    client: HttpClient,
+    viewModel: AppViewModel,
 ){
 
     val isLoggedIn = remember {
