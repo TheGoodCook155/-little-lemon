@@ -1,5 +1,7 @@
 package com.course.capstone.littlelemon.network.dto
 
+import androidx.room.Entity
+
 
 @kotlinx.serialization.Serializable
 data class Meal(
