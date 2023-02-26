@@ -1,13 +1,11 @@
 package com.course.capstone.littlelemon.navigation.screens
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.util.Log
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
@@ -38,32 +36,22 @@ import com.course.capstone.littlelemon.components.CustomSearchField
 import com.course.capstone.littlelemon.db.MealsDataEntity
 
 
+
 @Composable
 fun HomeScreen(
     navController: NavHostController,
     meals: State<List<MealsDataEntity>>
 ) {
 
-    /*
-    Before displaying the menu items, you need to update the Home Composable with the hero section. Implement the UI for the hero banner below the header.
-
-    Include the information about the restaurant provided below:
-
-        Restaurant name: Little Lemon
-
-        City: Chicago
-
-        Short description: We are a family-owned Mediterranean restaurant, focused on traditional recipes served with a modern twist
-
-    Also add the hero image that was provided to you in the app assets zip folder.
-
-    The hero section should also include a search bar but you will add this in a later exercise.
-     */
 
     val searchString = rememberSaveable{
         mutableStateOf("")
     }
-    val verticalScrollState = rememberScrollState()
+
+    val categoryCallBack = rememberSaveable {
+        mutableStateOf("")
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()) {
@@ -77,11 +65,31 @@ fun HomeScreen(
             searchString.value = it
         }
 
-        OrderDeliverySection()
+        OrderDeliverySection(categoryCallBack){
+            categoryCallBack.value = it
+            Log.d("categoryCallBack.value", "HomeScreen: ${categoryCallBack.value}")
+        }
 
-        ListMealsSection(meals = meals.value)
 
+        ListMealsSection(meals = meals.value.filter { mealsDataEntity ->
 
+            if (!searchString.value.isBlank()){
+
+                mealsDataEntity.title.toLowerCase().startsWith(searchString.value.toLowerCase())
+
+            } else {
+
+                if (!categoryCallBack.value.isBlank()){
+
+                    mealsDataEntity.category.toLowerCase().equals(categoryCallBack.value)
+
+                }else{
+                    mealsDataEntity.title.toLowerCase().startsWith(searchString.value.toLowerCase())
+                }
+
+            }
+
+        })
 
     }
 
@@ -169,7 +177,24 @@ fun CreateMealCard(meal: MealsDataEntity) {
 }
 
 @Composable
-fun OrderDeliverySection() {
+fun OrderDeliverySection(categoryCallback: MutableState<String>, callback: (String) -> Unit) {
+
+    val startersColor = rememberSaveable {
+        mutableStateOf(R.color.gray_light)
+    }
+
+    val mainsColor = rememberSaveable {
+        mutableStateOf(R.color.gray_light)
+    }
+
+    val dessertsColor = rememberSaveable {
+        mutableStateOf(R.color.gray_light)
+    }
+
+    val drinksColor = rememberSaveable {
+        mutableStateOf(R.color.gray_light)
+    }
+
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -184,10 +209,46 @@ fun OrderDeliverySection() {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically) {
 
+            //deselect if already clicked
+            //if another clicked deselect the other
+            //change color of current when clicked
+            //return the category as a lambda
+            //Starters, Mains, Desserts, Drinks
+
+            //STARTERS
             Card(modifier = Modifier
                 .padding(end = 10.dp)
-                .clip(RoundedCornerShape(10.dp)),
-                backgroundColor = colorResource(id = R.color.gray_light)) {
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+
+                    mainsColor.value = R.color.gray_light
+                    dessertsColor.value = R.color.gray_light
+                    drinksColor.value = R.color.gray_light
+
+                    if (!categoryCallback.value.isBlank()) {
+                        categoryCallback.value = ""
+
+                        if (startersColor.value == R.color.yellow) {
+                            startersColor.value = R.color.gray_light
+                        }
+
+                        callback("")
+                        Log.d("callback", "OrderDeliverySection after callback: empty str returned")
+
+                    } else {
+
+                        callback("starters")
+
+                        if (startersColor.value == R.color.gray_light) {
+                            startersColor.value = R.color.yellow
+                        }
+
+                        Log.d("callback", "OrderDeliverySection after callback: starters returned")
+
+                    }
+
+                },
+                backgroundColor = colorResource(id = startersColor.value)) {
 
                 Text(text = "Starters",
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
@@ -195,11 +256,40 @@ fun OrderDeliverySection() {
 
             }
 
-
+            //MAINS
             Card(modifier = Modifier
                 .padding(end = 10.dp)
-                .clip(RoundedCornerShape(10.dp)),
-                backgroundColor = colorResource(id = R.color.gray_light)) {
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+
+                    startersColor.value = R.color.gray_light
+                    dessertsColor.value = R.color.gray_light
+                    drinksColor.value = R.color.gray_light
+
+                    if (!categoryCallback.value.isBlank()) {
+                        categoryCallback.value = ""
+
+                        if (mainsColor.value == R.color.yellow) {
+                            mainsColor.value = R.color.gray_light
+                        }
+
+                        callback("")
+                        Log.d("callback", "OrderDeliverySection after callback: empty str returned")
+
+                    } else {
+
+                        callback("mains")
+
+                        if (mainsColor.value == R.color.gray_light) {
+                            mainsColor.value = R.color.yellow
+                        }
+
+                        Log.d("callback", "OrderDeliverySection after callback: starters returned")
+
+                    }
+
+                },
+                backgroundColor = colorResource(id = mainsColor.value)) {
 
                 Text(text = "Mains",
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
@@ -207,10 +297,40 @@ fun OrderDeliverySection() {
 
             }
 
+            //Desserts
             Card(modifier = Modifier
                 .padding(end = 10.dp)
-                .clip(RoundedCornerShape(10.dp)),
-                backgroundColor = colorResource(id = R.color.gray_light)) {
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+
+                    startersColor.value = R.color.gray_light
+                    mainsColor.value = R.color.gray_light
+                    drinksColor.value = R.color.gray_light
+
+                    if (!categoryCallback.value.isBlank()) {
+                        categoryCallback.value = ""
+
+                        if (dessertsColor.value == R.color.yellow) {
+                            dessertsColor.value = R.color.gray_light
+                        }
+
+                        callback("")
+                        Log.d("callback", "OrderDeliverySection after callback: empty str returned")
+
+                    } else {
+
+                        callback("desserts")
+
+                        if (dessertsColor.value == R.color.gray_light) {
+                            dessertsColor.value = R.color.yellow
+                        }
+
+                        Log.d("callback", "OrderDeliverySection after callback: starters returned")
+
+                    }
+
+                },
+                backgroundColor = colorResource(id = dessertsColor.value)) {
 
                 Text(text = "Desserts",
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
@@ -218,10 +338,40 @@ fun OrderDeliverySection() {
 
             }
 
+            //DRINKS
             Card(modifier = Modifier
                 .padding(end = 10.dp)
-                .clip(RoundedCornerShape(10.dp)),
-                backgroundColor = colorResource(id = R.color.gray_light)) {
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+
+                    startersColor.value = R.color.gray_light
+                    mainsColor.value = R.color.gray_light
+                    dessertsColor.value = R.color.gray_light
+
+                    if (!categoryCallback.value.isBlank()) {
+                        categoryCallback.value = ""
+
+                        if (drinksColor.value == R.color.yellow) {
+                            drinksColor.value = R.color.gray_light
+                        }
+
+                        callback("")
+                        Log.d("callback", "OrderDeliverySection after callback: empty str returned")
+
+                    } else {
+
+                        callback("drinks")
+
+                        if (drinksColor.value == R.color.gray_light) {
+                            drinksColor.value = R.color.yellow
+                        }
+
+                        Log.d("callback", "OrderDeliverySection after callback: starters returned")
+
+                    }
+
+                },
+                backgroundColor = colorResource(id = drinksColor.value)) {
 
                 Text(text = "Drinks",
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),

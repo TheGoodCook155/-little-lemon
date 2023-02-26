@@ -119,6 +119,7 @@ fun CustomSearchField(userInput: MutableState<String>,
                 },
                 onDone = {
                     localFocusManager.moveFocus(focusDirection)
+                    localFocusManager.clearFocus(true)
                     keyboard?.hide()
                 }
             ), modifier = modifier,
