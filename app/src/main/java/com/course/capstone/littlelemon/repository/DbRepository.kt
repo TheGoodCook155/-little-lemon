@@ -4,6 +4,7 @@ import com.course.capstone.littlelemon.db.AppDatabase
 import com.course.capstone.littlelemon.db.DbDao
 import com.course.capstone.littlelemon.db.MealsDataEntity
 import com.course.capstone.littlelemon.network.dto.Meal
+import kotlinx.coroutines.flow.Flow
 
 
 class DbRepository(
@@ -11,7 +12,7 @@ class DbRepository(
 ) {
 
 
-    suspend fun getAllMeals() : List<MealsDataEntity>{
+    suspend fun getAllMeals() : Flow<List<MealsDataEntity>> {
         return dbDao.getAllMeals()
     }
 

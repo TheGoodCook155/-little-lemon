@@ -11,6 +11,9 @@ import com.course.capstone.littlelemon.network.dto.Meal
 import com.course.capstone.littlelemon.repository.DbRepository
 import com.course.capstone.littlelemon.repository.NetworkRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -33,6 +36,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
 
             dbRepository.insertMeal(meal)
+        }
+
+    }
+
+    private var _mealsFromDb = MutableStateFlow<List<MealsDataEntity>>(emptyList())
+    val mealsFromDb = _mealsFromDb.asStateFlow()
+    suspend fun getAllDbMeals(){
+
+        dbRepository.getAllMeals().collect{ meals ->
+            _mealsFromDb.value = meals
         }
 
     }
@@ -65,7 +78,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
             Log.d("appCycle", ": AppViewModel init block ends")
 
+            getAllDbMeals()
+
         }
+
 
     }
 

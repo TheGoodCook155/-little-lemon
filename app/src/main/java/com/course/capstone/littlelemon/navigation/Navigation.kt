@@ -96,7 +96,6 @@ fun Navigation(
     val startScreen = if (isLoggedIn.value == true) HomeScreen.route else OnboardingScreen.route
 
 
-
     NavHost(navController = navController, startDestination = startScreen){
 
         composable(OnboardingScreen.route){
@@ -115,7 +114,7 @@ fun Navigation(
         }
 
         composable(HomeScreen.route){
-            HomeScreen(navController)
+            HomeScreen(navController,viewModel.mealsFromDb.collectAsState())
         }
 
         composable(ProfileScreen.route){

@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.course.capstone.littlelemon.components.CustomTextField
 import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.model.User
@@ -81,7 +82,7 @@ fun OnboardingScreen(
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start) {
             Text(text = "Personal information", style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(start = 20.dp, top = 30.dp, bottom = 40.dp),
+                modifier = Modifier.padding(start = 20.dp, top = 30.dp, bottom = 20.dp),
                 textAlign = TextAlign.Start)
         }
 
@@ -93,9 +94,9 @@ fun OnboardingScreen(
             keyboardType = KeyboardType.Text,
             focusDirection = FocusDirection.Down,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 30.dp)
-                .fillMaxWidth(),
-//            label = "First Name"
+                .fillMaxWidth()
+                .height(53.dp)
+                .padding(start = 20.dp, end = 20.dp),
             readOnly = false,
             externalLabel = "First Name",
             onValueChange = {
@@ -110,9 +111,9 @@ fun OnboardingScreen(
             keyboardType = KeyboardType.Text,
             focusDirection = FocusDirection.Down,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 30.dp)
-                .fillMaxWidth(),
-//           label = "Last Name"
+                .padding(start = 20.dp, end = 20.dp)
+                .fillMaxWidth()
+                .height(53.dp),
             readOnly = false,
             externalLabel = "Last Name"
 
@@ -129,9 +130,9 @@ fun OnboardingScreen(
             keyboardType = KeyboardType.Email,
             focusDirection = FocusDirection.Down,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 30.dp)
-                .fillMaxWidth(),
-//            label = "Email Address"
+                .padding(start = 20.dp, end = 20.dp)
+                .fillMaxWidth()
+                .height(53.dp),
             readOnly = false,
             externalLabel = "Email"
 
@@ -156,7 +157,6 @@ fun OnboardingScreen(
                     Toast.makeText(context, "Registration successful.",Toast.LENGTH_LONG).show()
                     userCallback(user)
 
-//                    isLoggedIn(true)
 
                     scope.launch {
 
@@ -195,5 +195,5 @@ fun OnboardingScreen(
 @Preview(showBackground = true)
 @Composable
 fun OnboardingPreview(){
-//    Onboarding()
+
 }

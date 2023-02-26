@@ -26,21 +26,26 @@ val Typography = Typography(
         fontSize = 16.sp
     ),
 
-//    h1 = TextStyle(
-//        fontFamily = KarlaRegular,
-//        fontWeight = FontWeight.SemiBold,
-//        fontSize = 16.sp
-//    ),
-//    h5 = TextStyle(
-//    fontFamily = KarlaRegular,
-//    fontWeight = FontWeight.SemiBold,
-//    fontSize = 12.sp
-//    ),
-//    h4 = TextStyle(
-//        fontFamily = KarlaRegular,
-//        fontWeight = FontWeight.SemiBold,
-//        fontSize = 20.sp
-//    )
+    h1 = TextStyle(
+        fontFamily = KarlaRegular,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 40.sp
+    ),
+    h2 = TextStyle(
+        fontFamily = MarkaziRegular,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 20.sp
+    ),
+    h5 = TextStyle(
+    fontFamily = KarlaRegular,
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 12.sp
+    ),
+    h4 = TextStyle(
+        fontFamily = KarlaRegular,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp
+    )
 
 
     /* Other default text styles to override
