@@ -1,6 +1,7 @@
 package com.course.capstone.littlelemon.navigation.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,18 +30,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.course.capstone.littlelemon.R
 import com.course.capstone.littlelemon.components.CustomSearchField
+import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.db.MealsDataEntity
-
+import com.course.capstone.littlelemon.model.User
+import com.course.capstone.littlelemon.navigation.HomeScreen
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    meals: State<List<MealsDataEntity>>
+    meals: State<List<MealsDataEntity>>,
+    dataStore: DataStore<StoreValues>
 ) {
 
 
@@ -52,23 +58,59 @@ fun HomeScreen(
         mutableStateOf("")
     }
 
+    val isLoggedIn = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+
+    val user = dataStore.data.collectAsState(
+        initial = StoreValues()
+    ).value
+
+    val scope = rememberCoroutineScope()
+
+
+
+    if (user.user.firstName == "" || user.user.lastName == "" || user.user.emailAddress == ""){
+        isLoggedIn.value = false
+    }else{
+        isLoggedIn.value = true
+    }
+
+    BackHandler {
+
+        if (isLoggedIn.value == true){
+            scope.launch {
+                user.user.removeUser(dataStore)
+            }
+        }
+
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()) {
 
 
-        //Header section
-        HomeHeader()
 
-        //Hero section
-        HeroSection(searchString){
-            searchString.value = it
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+            //Header section
+            HomeHeader(navController = navController)
+
+            //Hero section
+            HeroSection(searchString){
+                searchString.value = it
+            }
+
+            OrderDeliverySection(categoryCallBack){
+                categoryCallBack.value = it
+                Log.d("categoryCallBack.value", "HomeScreen: ${categoryCallBack.value}")
+            }
+
         }
 
-        OrderDeliverySection(categoryCallBack){
-            categoryCallBack.value = it
-            Log.d("categoryCallBack.value", "HomeScreen: ${categoryCallBack.value}")
-        }
+
 
 
         ListMealsSection(meals = meals.value.filter { mealsDataEntity ->
@@ -198,7 +240,7 @@ fun OrderDeliverySection(categoryCallback: MutableState<String>, callback: (Stri
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .padding(start = 20.dp, top = 30.dp, bottom = 20.dp, end = 20.dp)) {
+        .padding(start = 20.dp, top = 15.dp, bottom = 3.dp, end = 20.dp)) {
 
         Text(text = stringResource(id = R.string.order_for_delivery),
             modifier = Modifier.padding(start = 5.dp, bottom = 15.dp),
@@ -208,12 +250,6 @@ fun OrderDeliverySection(categoryCallback: MutableState<String>, callback: (Stri
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically) {
-
-            //deselect if already clicked
-            //if another clicked deselect the other
-            //change color of current when clicked
-            //return the category as a lambda
-            //Starters, Mains, Desserts, Drinks
 
             //STARTERS
             Card(modifier = Modifier
@@ -394,11 +430,11 @@ fun OrderDeliverySection(categoryCallback: MutableState<String>, callback: (Stri
 }
 
 @Composable
-fun HomeHeader(){
+fun HomeHeader(navController: NavHostController){
 
         Row(modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp),
+            .height(80.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start) {
 
@@ -425,6 +461,9 @@ fun HomeHeader(){
             ) {
                 Image(painter = painterResource(id = R.drawable.profile), contentDescription = "Profile Image",
                     modifier = Modifier
+                        .clickable {
+                            navController.navigate(com.course.capstone.littlelemon.navigation.ProfileScreen.route)
+                        }
                         .width(50.dp)
                         .padding(top = 15.dp),
                     contentScale = ContentScale.FillWidth)
@@ -441,12 +480,12 @@ fun HeroSection(
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .height(330.dp)
+        .height(300.dp)
         .background(colorResource(id = R.color.green_Gray_Tint_Light)),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start) {
 
-        Text(modifier = Modifier.padding(top = 20.dp, start = 20.dp),
+        Text(modifier = Modifier.padding(top = 5.dp, start = 20.dp),
             text = stringResource(id = R.string.little_lemon),
             color = colorResource(id = R.color.yellow),
             style = MaterialTheme.typography.h2,
@@ -504,9 +543,9 @@ fun HeroSection(
                 keyboardType = KeyboardType.Text,
                 focusDirection = FocusDirection.Down,
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 5.dp)
                 ,
                 readOnly = false,
                 label = "Enter search phrase",

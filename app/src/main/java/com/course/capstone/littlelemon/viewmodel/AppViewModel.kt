@@ -1,9 +1,14 @@
 package com.course.capstone.littlelemon.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.course.capstone.littlelemon.datastore.AppSerializer
+import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.db.AppDatabase
 import com.course.capstone.littlelemon.db.DbDao
 import com.course.capstone.littlelemon.db.MealsDataEntity
@@ -16,8 +21,6 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-
-//TODO
 class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: NetworkRepository = NetworkRepository.getInstance()

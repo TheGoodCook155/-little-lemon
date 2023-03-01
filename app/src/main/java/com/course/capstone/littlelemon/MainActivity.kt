@@ -17,13 +17,17 @@ import com.course.capstone.littlelemon.navigation.Navigation
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
 import com.course.capstone.littlelemon.viewmodel.AppViewModel
 import io.ktor.client.*
+import io.ktor.http.*
 import kotlinx.coroutines.*
 
 
 class MainActivity : ComponentActivity() {
-    
-    val Context.dataStore by dataStore("store.json", AppSerializer)
-    
+
+    companion object{
+        val Context.dataStore by dataStore("store.json", AppSerializer)
+    }
+
+
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 Log.d("clientGet", "MainActivity | data: ${viewModel.getMeals()}")
                 
                 App(dataStore = dataStore, viewModel = viewModel)
-
 
 
             }
@@ -52,27 +55,6 @@ fun App(dataStore: DataStore<StoreValues>, viewModel: AppViewModel) {
     val navController = rememberNavController()
 
     Navigation(navController = navController,dataStore, viewModel)
-
-//    OutlinedTextField(value = value.value, onValueChange = {
-//        value.value = it
-//        onValueChange(it)
-//    },
-//        keyboardOptions = KeyboardOptions(
-//            imeAction = ImeAction.Next,
-//            keyboardType = KeyboardType.Text
-//        ),
-//        keyboardActions = KeyboardActions(
-//            onNext = {
-//
-//            },
-//            onDone = {
-//
-//            }
-//        ), modifier = Modifier.padding(5.dp),
-//        label = {
-////            Text(text = if (label != null) label.toString() else "")
-//        },
-//        shape = RoundedCornerShape(5.dp))
 
 }
 

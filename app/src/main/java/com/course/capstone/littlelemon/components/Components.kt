@@ -1,12 +1,14 @@
 package com.course.capstone.littlelemon.components
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -86,6 +88,57 @@ fun CustomTextField(
 
 }
 
+@Composable
+fun CustomTextFieldNotEditable(
+    userInput: MutableState<String>,
+    imeAction: ImeAction,
+    keyboardType: KeyboardType,
+    focusDirection: FocusDirection,
+    modifier: Modifier,
+    externalLabel: String,
+){
+    val localFocusManager = LocalFocusManager.current
+
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(bottom = 10.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top) {
+
+        Text(text = externalLabel,
+            fontSize = 11.sp,
+            modifier = Modifier.padding(start = 20.dp, bottom = 10.dp)
+        )
+
+        OutlinedTextField(value = userInput.value, onValueChange = {
+
+        },
+            keyboardOptions = KeyboardOptions(
+                imeAction = imeAction,
+                keyboardType = keyboardType
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    localFocusManager.moveFocus(focusDirection)
+                },
+                onDone = {
+                    localFocusManager.moveFocus(focusDirection)
+                }
+            ), modifier = modifier,
+            readOnly = true,
+            enabled = true,
+            colors = TextFieldDefaults.textFieldColors(textColor = colorResource(id = R.color.black), backgroundColor = colorResource(
+                id = R.color.white)),
+            shape = RoundedCornerShape(5.dp))
+
+    }
+
+
+
+
+}
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -140,6 +193,13 @@ fun CustomSearchField(userInput: MutableState<String>,
                 Icon(modifier = Modifier.padding(start = 15.dp, end = 35.dp),
                     imageVector = Icons.Default.Search, contentDescription = "Search Icon")
 
+            },
+            trailingIcon = {
+                Icon(modifier = Modifier.clickable {
+                    userInput.value = ""
+                }
+                    .padding(start = 15.dp, end = 15.dp),
+                    imageVector = Icons.Default.Clear, contentDescription = "Clear Icon")
             },
             singleLine = true,
             maxLines = 1,

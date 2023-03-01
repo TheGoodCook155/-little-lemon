@@ -51,7 +51,8 @@ fun OnboardingScreen(
 
 
     Column(modifier = Modifier
-        .fillMaxSize(),
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -101,6 +102,7 @@ fun OnboardingScreen(
             externalLabel = "First Name",
             onValueChange = {
                 firstName.value = it
+                user.firstName = it
             }
         )
 
@@ -164,8 +166,14 @@ fun OnboardingScreen(
 
                     }
 
+                    firstName.value = ""
+                    lastName.value = ""
+                    emailAddress.value = ""
+
                     navController.navigate(HomeScreen.route)
+
                 }
+
                 Log.d("TAG", "OnboardingScreen: Button clicked")
 
             },

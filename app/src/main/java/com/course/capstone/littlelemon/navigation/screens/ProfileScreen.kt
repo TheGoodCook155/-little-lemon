@@ -1,9 +1,7 @@
 package com.course.capstone.littlelemon.navigation.screens
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -11,10 +9,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -25,8 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.navigation.NavHostController
 import com.course.capstone.littlelemon.R
-import com.course.capstone.littlelemon.components.CustomTextField
+import com.course.capstone.littlelemon.components.CustomTextFieldNotEditable
 import com.course.capstone.littlelemon.datastore.StoreValues
+import com.course.capstone.littlelemon.model.User
 import com.course.capstone.littlelemon.navigation.OnboardingScreen
 import kotlinx.coroutines.launch
 
@@ -38,21 +37,33 @@ fun ProfileScreen(dataStore: DataStore<StoreValues>, navController: NavHostContr
         initial = StoreValues()
     ).value
 
-    val firstName = remember {
-        mutableStateOf(user.user.firstName)
-    }
-    val lastName = remember {
-        mutableStateOf(user.user.lastName)
-    }
-    val emailAddress = remember {
-        mutableStateOf(user.user.emailAddress)
+    Log.d("retrievedUser", "ProfileScreen: ${user}: FirstName: ${user.user.firstName}, LastName: ${user.user.lastName}, Email: ${user.user.emailAddress}")
+
+    val firstName = rememberSaveable {
+        mutableStateOf("")
     }
 
-    Log.d("TAG", "ProfileScreen: user ${firstName.value}, ${lastName.value}, ${emailAddress.value}")
+    val lastName = rememberSaveable {
+        mutableStateOf("")
+    }
+
+
+    val emailAddress = rememberSaveable{
+        mutableStateOf("")
+    }
+
+
+    firstName.value = user.user.firstName
+    lastName.value = user.user.lastName
+    emailAddress.value = user.user.emailAddress
+
+
+    Log.d("retrievedUser", "ProfileScreen: MutableStates: ${firstName.value}, LastName: ${lastName.value}, Email: ${emailAddress.value}")
 
 
     Column(modifier = Modifier
-        .fillMaxSize(),
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -62,23 +73,6 @@ fun ProfileScreen(dataStore: DataStore<StoreValues>, navController: NavHostContr
                 .padding(top = 15.dp),
             contentScale = ContentScale.FillWidth)
 
-//        Row(modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(top = 30.dp, bottom = 30.dp)
-//            .height(100.dp)
-//            .background(color = colorResource(id = R.color.green_Gray_Tint_Dark)),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.Center
-//
-//
-//        ) {
-//
-//            Text(text = "Let's get to know you", style = MaterialTheme.typography.h4,
-//                modifier = Modifier
-//                    .fillMaxWidth(),
-//                color = Color.White,
-//                textAlign = TextAlign.Center)
-//        }
 
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start) {
@@ -89,44 +83,42 @@ fun ProfileScreen(dataStore: DataStore<StoreValues>, navController: NavHostContr
 
 
         //first name
-        CustomTextField(
+        CustomTextFieldNotEditable(
             userInput = firstName,
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Text,
             focusDirection = FocusDirection.Down,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 30.dp)
-                .fillMaxWidth(),
-            readOnly = true,
-            externalLabel = "First Name"
-        ){}
+                .fillMaxWidth()
+                .height(53.dp)
+                .padding(start = 20.dp, end = 20.dp),
+            externalLabel = "First Name",
+        )
 
         //last name
-        CustomTextField(
+        CustomTextFieldNotEditable(
             userInput = lastName,
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Text,
             focusDirection = FocusDirection.Down,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 30.dp)
-                .fillMaxWidth(),
-            readOnly = true,
-            externalLabel = "Last Name"
+                .fillMaxWidth()
+                .height(53.dp)
+                .padding(start = 20.dp, end = 20.dp),
+            externalLabel = "Last Name",
+        )
 
-        ){}
-
-        CustomTextField(
+        CustomTextFieldNotEditable(
             userInput = emailAddress,
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Text,
             focusDirection = FocusDirection.Down,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 30.dp)
-                .fillMaxWidth(),
-            readOnly = true,
-            externalLabel = "Email"
-
-        ){}
+                .fillMaxWidth()
+                .height(53.dp)
+                .padding(start = 20.dp, end = 20.dp),
+            externalLabel = "Email address",
+        )
 
         //button
 
@@ -139,7 +131,9 @@ fun ProfileScreen(dataStore: DataStore<StoreValues>, navController: NavHostContr
                 scope.launch {
                     user.user.removeUser(dataStore)
                 }
-                 navController.navigate(OnboardingScreen.route)
+                 navController.navigate(OnboardingScreen.route){
+                        popUpTo(OnboardingScreen.route)
+                 }
 
             },
                 modifier = Modifier

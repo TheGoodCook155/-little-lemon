@@ -22,25 +22,12 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext, AppDatabase::class.java,
                     "db"
                 ).fallbackToDestructiveMigration()
-//                 .addCallback(roomCallback)
                  .build()
             }
 
             return instance!!
 
         }
-
-//        private val roomCallback = object : Callback() {
-//            override fun onCreate(db: SupportSQLiteDatabase) {
-//                super.onCreate(db)
-//                populateDatabase(instance!!)
-//            }
-//        }
-//
-//        private fun populateDatabase(db: AppDatabase) {
-//
-//
-//        }
     }
 
 }
