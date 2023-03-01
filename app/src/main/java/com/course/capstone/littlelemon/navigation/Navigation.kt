@@ -1,7 +1,9 @@
 package com.course.capstone.littlelemon.navigation
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.datastore.core.DataStore
 
 
@@ -13,6 +15,11 @@ import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.model.User
 import com.course.capstone.littlelemon.navigation.screens.HomeScreen
 import com.course.capstone.littlelemon.navigation.screens.ProfileScreen
+import com.course.capstone.littlelemon.viewmodel.AppViewModel
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 
 
 interface Navigation {
@@ -41,25 +48,27 @@ object ProfileScreen: Navigation{
 
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Navigation(
     navController: NavHostController,
     dataStore: DataStore<StoreValues>,
+    viewModel: AppViewModel,
 ){
 
-    val isLoggedIn = remember {
+    val isLoggedIn = rememberSaveable {
         mutableStateOf(false)
     }
 
-    val firstName = remember {
+    val firstName = rememberSaveable {
         mutableStateOf("")
     }
 
-    val lastName = remember {
+    val lastName = rememberSaveable {
         mutableStateOf("")
     }
 
-    val emailAddress = remember {
+    val emailAddress = rememberSaveable {
         mutableStateOf("")
     }
 
@@ -85,13 +94,14 @@ fun Navigation(
         isLoggedIn.value = true
     }
 
-    val startScreen = if (isLoggedIn.value == true) HomeScreen.route else OnboardingScreen.route
-
+    val startScreen = if (isLoggedIn.value == false) OnboardingScreen.route else HomeScreen.route
 
 
     NavHost(navController = navController, startDestination = startScreen){
 
         composable(OnboardingScreen.route){
+
+            Log.d("navigation", "Navigation: OnboardingScreen.route: entering Composable")
 
             OnboardingScreen(firstName,lastName,emailAddress,user, navController,dataStore,scope,{
 
@@ -103,15 +113,21 @@ fun Navigation(
                 lastName.value = it.lastName
                 emailAddress.value = it.emailAddress
             }
+            Log.d("navigation", "Navigation: OnboardingScreen.route: exit Composable")
+
 
         }
 
         composable(HomeScreen.route){
-            HomeScreen(navController)
+            Log.d("navigation", "Navigation: HomeScreen.route: entering Composable")
+            HomeScreen(navController,viewModel.mealsFromDb.collectAsState(), dataStore)
+            Log.d("navigation", "Navigation: ProfileScreen.route: exit Composable")
         }
 
         composable(ProfileScreen.route){
+            Log.d("navigation", "Navigation: ProfileScreen.route: entering Composable")
             ProfileScreen(dataStore = dataStore,navController)
+            Log.d("navigation", "Navigation: ProfileScreen.route: exit Composable")
         }
     }
 

@@ -1,9 +1,12 @@
 package com.course.capstone.littlelemon
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.runtime.*
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
@@ -12,26 +15,30 @@ import com.course.capstone.littlelemon.datastore.AppSerializer
 import com.course.capstone.littlelemon.datastore.StoreValues
 import com.course.capstone.littlelemon.navigation.Navigation
 import com.course.capstone.littlelemon.ui.theme.LittleLemonTheme
+import com.course.capstone.littlelemon.viewmodel.AppViewModel
+import io.ktor.client.*
+import io.ktor.http.*
+import kotlinx.coroutines.*
+
 
 class MainActivity : ComponentActivity() {
 
-    val Context.dataStore by dataStore("store.json", AppSerializer)
+    companion object{
+        val Context.dataStore by dataStore("store.json", AppSerializer)
+    }
 
+
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LittleLemonTheme {
 
-//                val value = remember{
-//                    mutableStateOf("")
-//                }
-//
-//                App(value){
-//                    value.value = it
-//                    Log.d("TAG", "onCreate: value: ${value.value}, it: ${it}")
-//                }
+                val viewModel by viewModels<AppViewModel>()
 
-                App(dataStore)
+                Log.d("clientGet", "MainActivity | data: ${viewModel.getMeals()}")
+                
+                App(dataStore = dataStore, viewModel = viewModel)
 
 
             }
@@ -39,33 +46,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
+
 @Composable
-fun App(dataStore: DataStore<StoreValues>) {
+fun App(dataStore: DataStore<StoreValues>, viewModel: AppViewModel) {
 
     val navController = rememberNavController()
 
-    Navigation(navController = navController,dataStore)
-
-//    OutlinedTextField(value = value.value, onValueChange = {
-//        value.value = it
-//        onValueChange(it)
-//    },
-//        keyboardOptions = KeyboardOptions(
-//            imeAction = ImeAction.Next,
-//            keyboardType = KeyboardType.Text
-//        ),
-//        keyboardActions = KeyboardActions(
-//            onNext = {
-//
-//            },
-//            onDone = {
-//
-//            }
-//        ), modifier = Modifier.padding(5.dp),
-//        label = {
-////            Text(text = if (label != null) label.toString() else "")
-//        },
-//        shape = RoundedCornerShape(5.dp))
+    Navigation(navController = navController,dataStore, viewModel)
 
 }
 
