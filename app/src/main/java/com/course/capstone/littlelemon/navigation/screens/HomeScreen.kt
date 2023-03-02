@@ -117,7 +117,7 @@ fun HomeScreen(
 
             if (!searchString.value.isBlank()){
 
-                mealsDataEntity.title.toLowerCase().startsWith(searchString.value.toLowerCase())
+                mealsDataEntity.title.toLowerCase().contains(searchString.value.toLowerCase())
 
             } else {
 
@@ -126,7 +126,7 @@ fun HomeScreen(
                     mealsDataEntity.category.toLowerCase().equals(categoryCallBack.value)
 
                 }else{
-                    mealsDataEntity.title.toLowerCase().startsWith(searchString.value.toLowerCase())
+                    mealsDataEntity.title.toLowerCase().contains(searchString.value.toLowerCase())
                 }
 
             }
